@@ -5,7 +5,7 @@ export const useDataStore = defineStore('data', {
   state: () => ({
     inflations: [] as Inflation[],
     accounts: [] as Array<Transaction[][]>,
-    allAccounts: [] as Transactions[], // Changement ici pour un tableau de valeurs
+    allAccounts: [] as Transactions[],
   }),
   actions: {
     addUniqueAccounts(newAccounts: Transaction[][]) {

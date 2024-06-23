@@ -9,6 +9,7 @@
       :autosize="true"
       :chart-options="chartOptions"
       :series-options="seriesOptions"
+      :price-scale-options="priceScaleOptions"
     />
   </div>
 </template>
@@ -17,7 +18,6 @@
 import { storeToRefs } from 'pinia';
 import { computed, ref, watch } from 'vue';
 import { useDataStore } from '@/stores/data.store';
-import type { Transaction } from '@/types/data';
 
 const dataStore = useDataStore();
 const { allAccounts } = storeToRefs(dataStore);
@@ -26,6 +26,11 @@ const loaded = ref(true);
 const chartType = ref('line');
 const lwChart = ref();
 const chartOptions = ref({});
+const priceScaleOptions = ref([
+  {
+    position: 'none', // Disable the price scale
+  },
+]);
 const seriesOptions = ref([
   {
     color: 'rgb(45, 77, 205)',

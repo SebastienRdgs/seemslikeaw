@@ -15,7 +15,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
-import type { Account, Transaction } from '@/types/data';
+import type { Transaction } from '@/types/data';
 import { useDataStore } from '@/stores/data.store';
 
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -38,7 +38,6 @@ const handleFilesSelected = (event: Event) => {
           const jsonContent = e.target?.result as string;
           try {
             const parsedData: Transaction[][] = JSON.parse(jsonContent);
-            // console.log(parsedData);
             dataStore.addUniqueAccounts(parsedData);
             dataStore.updateData();
           } catch (error) {
@@ -57,7 +56,7 @@ const handleFilesSelected = (event: Event) => {
 const pasteFromClipboard = async () => {
   try {
     const clipboardData = await navigator.clipboard.readText();
-    const parsedData: Transaction[] = JSON.parse(clipboardData);
+    const parsedData: Transaction[][] = JSON.parse(clipboardData);
     dataStore.addUniqueAccounts(parsedData);
   } catch (error) {
     console.error('Error pasting from clipboard:', error);

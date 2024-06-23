@@ -2,7 +2,6 @@
 import { ref, onMounted, onUnmounted, watch, defineExpose, defineProps } from 'vue';
 import { createChart } from 'lightweight-charts';
 import { StackedAreaSeries } from '@/components/stacked-area-series/stacked-area-series';
-import { multipleBarData } from '@/types/data';
 
 const props = defineProps({
   type: {
@@ -19,6 +18,11 @@ const props = defineProps({
   },
   chartOptions: {
     type: Object,
+    default: () => ({
+      rightPriceScale: {
+        visible: false, // Hide the right price scale
+      },
+    }),
   },
   seriesOptions: {
     type: Object,
@@ -30,11 +34,6 @@ const props = defineProps({
     type: Object,
   },
 });
-
-// Function to get the correct series constructor name for current series type.
-function getChartSeriesConstructorName(type) {
-  return `add${type.charAt(0).toUpperCase() + type.slice(1)}Series`;
-}
 
 // Lightweight Charts™ instances are stored as normal JS variables
 // If you need to use a ref then it is recommended that you use `shallowRef` instead
@@ -63,19 +62,10 @@ const resizeHandler = () => {
 
 // Creates the chart series and sets the data.
 const addSeriesAndData = (props) => {
-  // const seriesConstructor = getChartSeriesConstructorName(props.type);
-  // series = chart[seriesConstructor](props.seriesOptions);
-
   const stackedAreaSeries = new StackedAreaSeries();
+  const myserie = chart.addCustomSeries(stackedAreaSeries, props.seriesOptions);
 
-  const myserie = chart.addCustomSeries(stackedAreaSeries, {});
-  // console.log('props.data', props.data);
   myserie.setData(props.data);
-
-  // const data = multipleBarData(5, 200, 2);
-  // console.log('zaezaezaezaezaeza', data);
-  // myserie.setData(data);
-
   chart.timeScale().fitContent();
 };
 
@@ -85,7 +75,10 @@ onMounted(() => {
   addSeriesAndData(props);
 
   if (props.priceScaleOptions) {
-    chart.priceScale().applyOptions(props.priceScaleOptions);
+    chart.priceScale('right').applyOptions({
+      visible: false, // Hide the right price scale
+    });
+    chart.priceScale('left').applyOptions(props.priceScaleOptions);
   }
 
   if (props.timeScaleOptions) {
@@ -134,7 +127,7 @@ watch(
 
 watch(
   () => props.type,
-  (newType) => {
+  () => {
     if (series && chart) {
       chart.removeSeries(series);
     }
