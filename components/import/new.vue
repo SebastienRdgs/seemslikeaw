@@ -40,6 +40,7 @@ const handleFilesSelected = (event: Event) => {
             const parsedData: Transaction[][] = JSON.parse(jsonContent);
             // console.log(parsedData);
             dataStore.addUniqueAccounts(parsedData);
+            dataStore.updateData();
           } catch (error) {
             console.error('Error adding account:', error);
           }

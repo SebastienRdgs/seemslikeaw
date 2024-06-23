@@ -69,7 +69,7 @@ const addSeriesAndData = (props) => {
   const stackedAreaSeries = new StackedAreaSeries();
 
   const myserie = chart.addCustomSeries(stackedAreaSeries, {});
-  console.log('props.data', props.data);
+  // console.log('props.data', props.data);
   myserie.setData(props.data);
 
   // const data = multipleBarData(5, 200, 2);

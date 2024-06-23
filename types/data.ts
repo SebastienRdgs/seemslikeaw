@@ -1,8 +1,13 @@
 import type { Time, WhitespaceData } from 'lightweight-charts';
 
+export interface Transactions {
+  time: string;
+  values: number[];
+}
+
 export interface Transaction {
   time: string;
-  value: number[] | number;
+  value: number;
 }
 
 export interface Account {

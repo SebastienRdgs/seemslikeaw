@@ -1,18 +1,14 @@
 import { defineStore } from 'pinia';
-import type { Inflation, Transaction } from '@/types/data';
+import type { Inflation, Transaction, Transactions } from '@/types/data';
 
 export const useDataStore = defineStore('data', {
   state: () => ({
     inflations: [] as Inflation[],
-    accounts: [] as any[],
-    finalAccounts: [] as Transaction[],
-    allAccounts: [] as { time: string; values: number[] }[], // Changement ici pour un tableau de valeurs
+    accounts: [] as Array<Transaction[][]>,
+    allAccounts: [] as Transactions[], // Changement ici pour un tableau de valeurs
   }),
   actions: {
     addUniqueAccounts(newAccounts: Transaction[][]) {
-      console.log('addUniqueAccounts', newAccounts);
-
-      // Trouver les dates uniques dans toutes les transactions
       const uniqueDates = new Set<string>();
       for (const i in newAccounts) {
         for (const y in newAccounts[i]) {
@@ -20,47 +16,37 @@ export const useDataStore = defineStore('data', {
         }
       }
 
-      // Initialiser le tableau allAccounts
-      this.allAccounts = Array.from(uniqueDates).map((date) => ({
-        time: date,
-        values: Array(newAccounts.length).fill(0), // Initialiser les valeurs à 0
-      }));
+      this.accounts.push(newAccounts);
 
-      // Remplir le tableau avec les valeurs correspondantes
-      for (const i in newAccounts) {
-        for (const y in newAccounts[i]) {
-          const transaction = newAccounts[i][y];
-          for (let j = 0; j < this.allAccounts.length; j++) {
-            if (this.allAccounts[j].time === transaction.time) {
-              this.allAccounts[j].values.push(transaction.value);
-              break; // Sortir de la boucle une fois trouvé
+      const dates = Array.from(uniqueDates);
+      for (const date of dates) {
+        if (!this.allAccounts.some((account) => account.time === date)) {
+          this.allAccounts.push({
+            time: date,
+            values: [],
+          });
+        }
+      }
+
+      // Faire le sorteur pour classer les comptes par ancienneté
+    },
+    updateData() {
+      for (let j = 0; j < this.allAccounts.length; j++) {
+        for (const i in this.accounts) {
+          for (const account of Object.values(this.accounts[i])) {
+            if (j === 0) {
+              this.allAccounts[j].values[i] =
+                account.find((account) => account.time === this.allAccounts[j].time)?.value || 0;
+            }
+            if (j > 0) {
+              const values = account.find((account) => account.time === this.allAccounts[j].time);
+              this.allAccounts[j].values[i] = values ? values.value || 0 : 0 || this.allAccounts[j - 1].values[i] || 0;
             }
           }
         }
       }
 
-      // Trier les dates
       this.allAccounts.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
-
-      // Compléter finalAccounts et accounts si nécessaire
-      this.finalAccounts = this.allAccounts.map((a) => ({
-        time: a.time,
-        value: a.values.reduce((sum, v) => sum + v, 0), // Somme des valeurs pour chaque date
-      }));
-
-      // for (const account in newAccounts) {
-      //   console.log('ici', newAccounts[account]);
-      //   this.accounts = newAccounts[account].map((account: Transaction[], index) => ({
-      //     account,
-      //     firsttime: account.reduce((earliest, current) => {
-      //       return new Date(current.time) < new Date(earliest.time) ? current : earliest;
-      //     }),
-      //   }));
-      // }
-
-      console.log('finalAccounts', this.finalAccounts);
-      console.log('accounts', this.accounts);
-      console.log('allAccounts', this.allAccounts);
     },
   },
 });
