@@ -1,6 +1,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, defineExpose, defineProps } from 'vue';
 import { createChart } from 'lightweight-charts';
+import { StackedAreaSeries } from '@/components/stacked-area-series/stacked-area-series';
+import { multipleBarData } from '@/types/data';
 
 const props = defineProps({
   type: {
@@ -61,9 +63,20 @@ const resizeHandler = () => {
 
 // Creates the chart series and sets the data.
 const addSeriesAndData = (props) => {
-  const seriesConstructor = getChartSeriesConstructorName(props.type);
-  series = chart[seriesConstructor](props.seriesOptions);
-  series.setData(props.data);
+  // const seriesConstructor = getChartSeriesConstructorName(props.type);
+  // series = chart[seriesConstructor](props.seriesOptions);
+
+  const stackedAreaSeries = new StackedAreaSeries();
+
+  const myserie = chart.addCustomSeries(stackedAreaSeries, {});
+  console.log('props.data', props.data);
+  myserie.setData(props.data);
+
+  // const data = multipleBarData(5, 200, 2);
+  // console.log('zaezaezaezaezaeza', data);
+  // myserie.setData(data);
+
+  chart.timeScale().fitContent();
 };
 
 onMounted(() => {

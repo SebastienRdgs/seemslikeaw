@@ -37,7 +37,8 @@ const handleFilesSelected = (event: Event) => {
         reader.onload = (e) => {
           const jsonContent = e.target?.result as string;
           try {
-            const parsedData: Transaction[] = JSON.parse(jsonContent);
+            const parsedData: Transaction[][] = JSON.parse(jsonContent);
+            // console.log(parsedData);
             dataStore.addUniqueAccounts(parsedData);
           } catch (error) {
             console.error('Error adding account:', error);

@@ -20,7 +20,7 @@ import { useDataStore } from '@/stores/data.store';
 import type { Transaction } from '@/types/data';
 
 const dataStore = useDataStore();
-const { accounts } = storeToRefs(dataStore);
+const { allAccounts } = storeToRefs(dataStore);
 
 const loaded = ref(true);
 const chartType = ref('line');
@@ -36,19 +36,7 @@ const seriesOptions = ref([
 ]);
 
 const chartData = computed(() => {
-  const data = accounts.value;
-  const result = [];
-  for (const [key, value] of Object.entries(data)) {
-    console.log(key, value);
-    result.push(
-      data[key].map((t: Transaction) => ({
-        time: t.time,
-        value: t.value,
-      })),
-    );
-  }
-  console.log(result);
-  return result;
+  return allAccounts.value;
 });
 
 const updateChartData = () => {
@@ -59,7 +47,7 @@ const updateChartData = () => {
 };
 
 watch(
-  () => accounts,
+  () => allAccounts,
   () => {
     updateChartData();
   },
