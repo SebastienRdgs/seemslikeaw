@@ -18,11 +18,6 @@ const props = defineProps({
   },
   chartOptions: {
     type: Object,
-    default: () => ({
-      rightPriceScale: {
-        visible: false, // Hide the right price scale
-      },
-    }),
   },
   seriesOptions: {
     type: Object,
@@ -75,10 +70,7 @@ onMounted(() => {
   addSeriesAndData(props);
 
   if (props.priceScaleOptions) {
-    chart.priceScale('right').applyOptions({
-      visible: false, // Hide the right price scale
-    });
-    chart.priceScale('left').applyOptions(props.priceScaleOptions);
+    chart.priceScale('right').applyOptions(props.priceScaleOptions);
   }
 
   if (props.timeScaleOptions) {
@@ -163,7 +155,7 @@ watch(
   () => props.priceScaleOptions,
   (newOptions) => {
     if (!chart) return;
-    chart.priceScale().applyOptions(newOptions);
+    chart.priceScale('right').applyOptions(newOptions);
   },
 );
 

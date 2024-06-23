@@ -6,6 +6,9 @@ export const useDataStore = defineStore('data', {
     inflations: [] as Inflation[],
     accounts: [] as Array<Transaction[][]>,
     allAccounts: [] as Transactions[],
+    priceScaleOptions: {
+      visible: true,
+    },
   }),
   actions: {
     addUniqueAccounts(newAccounts: Transaction[][]) {
@@ -28,7 +31,10 @@ export const useDataStore = defineStore('data', {
         }
       }
 
-      // Faire le sorteur pour classer les comptes par ancienneté
+      this.accounts.sort(
+        (a, b) => new Date(Object.values(a)[0][0].time).getTime() - new Date(Object.values(b)[0][0].time).getTime(),
+      );
+      // console.log(this.accounts);
     },
     updateData() {
       for (let j = 0; j < this.allAccounts.length; j++) {
@@ -47,6 +53,7 @@ export const useDataStore = defineStore('data', {
       }
 
       console.log(this.allAccounts[this.allAccounts.length - 1]);
+      // console.log(this.allAccounts);
 
       this.allAccounts.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
     },

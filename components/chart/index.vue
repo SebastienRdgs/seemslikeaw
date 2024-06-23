@@ -11,6 +11,7 @@
       :series-options="seriesOptions"
       :price-scale-options="priceScaleOptions"
     />
+    <c-button v-if="loaded && chartData.length" @click="toggleDisplayPrice">Affichage montants</c-button>
   </div>
 </template>
 
@@ -20,17 +21,13 @@ import { computed, ref, watch } from 'vue';
 import { useDataStore } from '@/stores/data.store';
 
 const dataStore = useDataStore();
-const { allAccounts } = storeToRefs(dataStore);
+const { allAccounts, priceScaleOptions } = storeToRefs(dataStore);
 
 const loaded = ref(true);
 const chartType = ref('line');
 const lwChart = ref();
 const chartOptions = ref({});
-const priceScaleOptions = ref([
-  {
-    position: 'none', // Disable the price scale
-  },
-]);
+const displayPrice = ref(true);
 const seriesOptions = ref([
   {
     color: 'rgb(45, 77, 205)',
@@ -43,6 +40,17 @@ const seriesOptions = ref([
 const chartData = computed(() => {
   return allAccounts.value;
 });
+
+const toggleDisplayPrice = () => {
+  displayPrice.value = !displayPrice.value;
+};
+
+watch(
+  () => displayPrice.value,
+  (newDisplayPrice) => {
+    priceScaleOptions.value = { ...priceScaleOptions.value, visible: newDisplayPrice };
+  },
+);
 
 const updateChartData = () => {
   loaded.value = false;
