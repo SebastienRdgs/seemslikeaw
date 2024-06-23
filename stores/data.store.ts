@@ -46,6 +46,8 @@ export const useDataStore = defineStore('data', {
         }
       }
 
+      console.log(this.allAccounts[this.allAccounts.length - 1]);
+
       this.allAccounts.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
     },
   },
